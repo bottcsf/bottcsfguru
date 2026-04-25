@@ -1020,6 +1020,71 @@ class VerCartaSelect(discord.ui.Select):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # ───────────────────────────────────────────
+# VIEW DE CONFIRMAÇÃO PARA /deletarplayer
+# ───────────────────────────────────────────
+class ConfirmarDeleteView(discord.ui.View):
+    def __init__(self, admin_id: int, jogador: dict):
+        super().__init__(timeout=60)
+        self.admin_id = admin_id
+        self.jogador = jogador
+    
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.admin_id:
+            await interaction.response.send_message("❌ Apenas o administrador que executou o comando pode confirmar.", ephemeral=True)
+            return False
+        return True
+    
+    @discord.ui.button(label="✅ Confirmar Exclusão", style=discord.ButtonStyle.danger)
+    async def confirmar_btn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        dados = carregar_dados()
+        disponiveis = dados.get("jogadores_disponiveis", [])
+        
+        # Remove o jogador do banco (por nome exato)
+        novos_disponiveis = [
+            j for j in disponiveis
+            if j["nome"].lower() != self.jogador["nome"].lower()
+        ]
+        
+        qtd_removidos = len(disponiveis) - len(novos_disponiveis)
+        dados["jogadores_disponiveis"] = novos_disponiveis
+        salvar_dados(dados)
+        criar_backup()
+        
+        pos_full = POSICAO_FULL.get(self.jogador["posicao"], self.jogador["posicao"])
+        
+        embed = discord.Embed(
+            title="🗑️ Jogador Deletado do Banco",
+            description=f"**{self.jogador['nome']}** foi removido do banco de jogadores.\n\nBackup criado automaticamente.",
+            color=0xe74c3c
+        )
+        embed.add_field(name="Jogador", value=self.jogador["nome"], inline=True)
+        embed.add_field(name="Overall", value=f"{self.jogador['overall']}", inline=True)
+        embed.add_field(name="Posição", value=pos_full, inline=True)
+        embed.add_field(name="Clube", value=self.jogador["clube"], inline=True)
+        embed.add_field(name="Entradas removidas", value=f"{qtd_removidos}", inline=True)
+        embed.add_field(name="Banco restante", value=f"{len(novos_disponiveis)} jogadores", inline=True)
+        embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        for child in self.children:
+            child.disabled = True
+        
+        await interaction.response.edit_message(embed=embed, view=self)
+    
+    @discord.ui.button(label="✕ Cancelar", style=discord.ButtonStyle.secondary)
+    async def cancelar_btn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        embed = discord.Embed(
+            title="Operação Cancelada",
+            description=f"**{self.jogador['nome']}** não foi deletado.",
+            color=0x95a5a6
+        )
+        embed.set_footer(text="TCSF Guru · ADM")
+        
+        for child in self.children:
+            child.disabled = True
+        
+        await interaction.response.edit_message(embed=embed, view=self)
+
+# ───────────────────────────────────────────
 # BOT
 # ───────────────────────────────────────────
 intents = discord.Intents.default()
@@ -1104,6 +1169,112 @@ async def addplayer(
     
     embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     await interaction.response.send_message(embed=embed)
+
+# ───────────────────────────────────────────
+# AUTOCOMPLETE PARA /deletarplayer
+# ───────────────────────────────────────────
+async def autocomplete_jogador_banco(
+    interaction: discord.Interaction,
+    current: str
+) -> List[app_commands.Choice[str]]:
+    """Autocomplete que lista jogadores do banco filtrando pelo que o admin está digitando"""
+    dados = carregar_dados()
+    disponiveis = dados.get("jogadores_disponiveis", [])
+    
+    # Filtra por nome (case-insensitive)
+    filtrados = [
+        j for j in disponiveis
+        if current.lower() in j["nome"].lower()
+    ]
+    
+    # Ordena por overall (maiores primeiro) e limita a 25 (limite do Discord)
+    filtrados = sorted(filtrados, key=lambda j: j["overall"], reverse=True)[:25]
+    
+    return [
+        app_commands.Choice(
+            name=f"{j['nome']} · {j['overall']} OVR · {j['posicao']} · {j['clube']}",
+            value=j["nome"]
+        )
+        for j in filtrados
+    ]
+
+@tree.command(name="deletarplayer", description="[ADM] Deleta um jogador do banco pelo nome")
+@app_commands.describe(nome="Nome do jogador a deletar (use o autocomplete para encontrar)")
+@app_commands.autocomplete(nome=autocomplete_jogador_banco)
+async def deletarplayer(interaction: discord.Interaction, nome: str):
+    if not is_admin(interaction):
+        await interaction.response.send_message("❌ Apenas administradores podem usar este comando.", ephemeral=True)
+        return
+    
+    dados = carregar_dados()
+    disponiveis = dados.get("jogadores_disponiveis", [])
+    
+    if not disponiveis:
+        embed = discord.Embed(
+            title="❌ Banco Vazio",
+            description="Não há jogadores no banco para deletar.",
+            color=0x95a5a6
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    # Busca o jogador (exact match primeiro, depois parcial)
+    jogador = next(
+        (j for j in disponiveis if j["nome"].lower() == nome.lower()),
+        None
+    )
+    
+    # Se não achou exato, tenta parcial
+    if not jogador:
+        jogador = next(
+            (j for j in disponiveis if nome.lower() in j["nome"].lower()),
+            None
+        )
+    
+    if not jogador:
+        # Sugere nomes parecidos
+        sugestoes = [
+            j["nome"] for j in disponiveis
+            if nome.lower()[0] == j["nome"].lower()[0]
+        ][:5]
+        sugestoes_texto = "\n".join(f"• {s}" for s in sugestoes) if sugestoes else "Nenhuma sugestão."
+        
+        embed = discord.Embed(
+            title="❌ Jogador Não Encontrado",
+            description=f"**{nome}** não está no banco.\n\n**Sugestões:**\n{sugestoes_texto}\n\nUse `/listaplayers` para ver todos.",
+            color=0xe74c3c
+        )
+        embed.set_footer(text="TCSF Guru · ADM")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    pos_full = POSICAO_FULL.get(jogador["posicao"], jogador["posicao"])
+    raridade = calcular_raridade(jogador)
+    
+    # Embed de confirmação antes de deletar
+    embed = discord.Embed(
+        title="⚠️ Confirmar Exclusão",
+        description=(
+            f"Você está prestes a **deletar permanentemente** o jogador abaixo do banco.\n\n"
+            f"Esta ação **não remove** o jogador dos elencos dos membros que já o possuem.\n\n"
+            f"Deseja continuar?"
+        ),
+        color=0xe67e22
+    )
+    embed.add_field(name="👤 Jogador", value=jogador["nome"], inline=True)
+    embed.add_field(name="📊 Overall", value=f"{jogador['overall']}", inline=True)
+    embed.add_field(name="📍 Posição", value=pos_full, inline=True)
+    embed.add_field(name="🎽 Clube", value=jogador["clube"], inline=True)
+    embed.add_field(name="💰 Valor", value=fmt_reais(jogador["preco"]), inline=True)
+    embed.add_field(name="🎴 Raridade", value=raridade, inline=True)
+    
+    if jogador.get("imagem"):
+        embed.set_thumbnail(url=jogador["imagem"])
+    
+    embed.set_footer(text=f"TCSF Guru · ADM · {interaction.user.display_name} · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    
+    view = ConfirmarDeleteView(admin_id=interaction.user.id, jogador=jogador)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 @tree.command(name="comprar", description="Abre o mercado de transferências")
 async def comprar(interaction: discord.Interaction):
@@ -1701,8 +1872,4 @@ async def limpar_duplicatas(interaction: discord.Interaction):
     )
     embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     await interaction.response.send_message(embed=embed, ephemeral=True)
-
-# ───────────────────────────────────────────
-# INICIAR BOT
-# ───────────────────────────────────────────
 bot.run(TOKEN)
