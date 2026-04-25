@@ -1,0 +1,628 @@
+{
+  "jogadores_disponiveis": [
+    {
+      "nome": "venxcore",
+      "posicao": "CB",
+      "overall": 89,
+      "clube": "Denmark",
+      "preco": 3000000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+    },
+    {
+      "nome": "ceozinhoword",
+      "posicao": "CM",
+      "overall": 87,
+      "clube": "Italy",
+      "preco": 2500000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+    },
+    {
+      "nome": "mikaelJUnico",
+      "posicao": "CM",
+      "overall": 79,
+      "clube": "Greece",
+      "preco": 100000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+    },
+    {
+      "nome": "JFLEVOUBAN7D",
+      "posicao": "GK",
+      "overall": 85,
+      "clube": "Greece",
+      "preco": 2400000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497388269929762977/133_Sem_Titulo_20260424210547.png?ex=69ed56ff&is=69ec057f&hm=2a9fb0286fe604fa9f2556c8583aa20751ea5fd0c9601aa332a4c73cc9f57b2e&"
+    },
+    {
+      "nome": "Feliiou",
+      "posicao": "CB",
+      "overall": 91,
+      "clube": "England",
+      "preco": 85000000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497395999222665216/134_Sem_Titulo_20260424213631.png?ex=69ed5e32&is=69ec0cb2&hm=64466798dacc368247fb2f5425ea92c8e5dff415e79d8768b44f9eb592ecac64&"
+    },
+    {
+      "nome": "Kronis1234",
+      "posicao": "ST",
+      "overall": 76,
+      "clube": "Czechia",
+      "preco": 485000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+    },
+    {
+      "nome": "Blink6k6k",
+      "posicao": "ST",
+      "overall": 74,
+      "clube": "Portugal",
+      "preco": 350000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497406829594935356/136_Sem_Titulo_20260424221943.png?ex=69ed6848&is=69ec16c8&hm=d40a418ace0060f72bd35144ba3dc80afd0847ca13a166eb0bba8e2eea9bd366&"
+    }
+  ],
+  "membros": {
+    "1467653394373279797": {
+      "saldo": 7771000,
+      "time_nome": "Teste",
+      "time_sigla": "TST",
+      "elenco": [
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "Blink6k6k",
+          "posicao": "ST",
+          "overall": 74,
+          "clube": "Portugal",
+          "preco": 350000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497406829594935356/136_Sem_Titulo_20260424221943.png?ex=69ed6848&is=69ec16c8&hm=d40a418ace0060f72bd35144ba3dc80afd0847ca13a166eb0bba8e2eea9bd366&"
+        },
+        {
+          "nome": "JFLEVOUBAN7D",
+          "posicao": "GK",
+          "overall": 85,
+          "clube": "Greece",
+          "preco": 2400000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497388269929762977/133_Sem_Titulo_20260424210547.png?ex=69ed56ff&is=69ec057f&hm=2a9fb0286fe604fa9f2556c8583aa20751ea5fd0c9601aa332a4c73cc9f57b2e&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        }
+      ]
+    },
+    "1374891196014530561": {
+      "saldo": 61000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": null
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": null
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        }
+      ]
+    },
+    "1450470305116979301": {
+      "saldo": 5101000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [],
+      "titulares": []
+    },
+    "1496910151477756055": {
+      "saldo": 121000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "JFLEVOUBAN7D",
+          "posicao": "GK",
+          "overall": 85,
+          "clube": "Greece",
+          "preco": 2400000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497388269929762977/133_Sem_Titulo_20260424210547.png?ex=69ed56ff&is=69ec057f&hm=2a9fb0286fe604fa9f2556c8583aa20751ea5fd0c9601aa332a4c73cc9f57b2e&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "JFLEVOUBAN7D",
+          "posicao": "GK",
+          "overall": 85,
+          "clube": "Greece",
+          "preco": 2400000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497388269929762977/133_Sem_Titulo_20260424210547.png?ex=69ed56ff&is=69ec057f&hm=2a9fb0286fe604fa9f2556c8583aa20751ea5fd0c9601aa332a4c73cc9f57b2e&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "JFLEVOUBAN7D",
+          "posicao": "GK",
+          "overall": 85,
+          "clube": "Greece",
+          "preco": 2400000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497388269929762977/133_Sem_Titulo_20260424210547.png?ex=69ed56ff&is=69ec057f&hm=2a9fb0286fe604fa9f2556c8583aa20751ea5fd0c9601aa332a4c73cc9f57b2e&"
+        }
+      ]
+    },
+    "1479741426706284620": {
+      "saldo": 1033000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        },
+        {
+          "nome": "Kronis1234",
+          "posicao": "ST",
+          "overall": 76,
+          "clube": "Czechia",
+          "preco": 485000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497401584232169582/135_Sem_Titulo_20260424215848.png?ex=69ed6366&is=69ec11e6&hm=3edff5f091ea78e517e8599c35b34d5bc43e7cde8e3bad1e23d40b4c5bed44bd&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "ceozinhoword",
+          "posicao": "CM",
+          "overall": 87,
+          "clube": "Italy",
+          "preco": 2500000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497361875988385966/131_Sem_Titulo_20260424192106.png?ex=69ed3e6a&is=69ebecea&hm=5dab07f5ec0dcc6fecc6503a55732050f455256246b4c9b9a26e83b3ae850619&"
+        },
+        {
+          "nome": "venxcore",
+          "posicao": "CB",
+          "overall": 89,
+          "clube": "Denmark",
+          "preco": 3000000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497358017400803438/130_Sem_Titulo_20260424190520.png?ex=69ed3ad2&is=69ebe952&hm=38414461d0b2631f497cab6d8bfb13f5aa98aa54951e5670a70a6d543596d555&"
+        }
+      ]
+    },
+    "1366140164212133968": {
+      "saldo": 1000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ]
+    },
+    "1428936283497169031": {
+      "saldo": 1000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ]
+    },
+    "959202597527519342": {
+      "saldo": 1000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ],
+      "titulares": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ]
+    },
+    "1426326721225031701": {
+      "saldo": 1000,
+      "time_nome": null,
+      "time_sigla": null,
+      "elenco": [
+        {
+          "nome": "mikaelJUnico",
+          "posicao": "CM",
+          "overall": 79,
+          "clube": "Greece",
+          "preco": 100000,
+          "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497379807032377566/132_Sem_Titulo_20260424203218.png?ex=69ed4f1d&is=69ebfd9d&hm=058dd8751b55d68f3c8769c79d1f7eae37ae521458881ef5d7bc421c9a58ec72&"
+        }
+      ],
+      "titulares": []
+    }
+  }
+}
