@@ -340,6 +340,91 @@ def calcular_chance_percentual(jogador: dict, todos_jogadores: list) -> float:
     return round(chance, 2)
 
 # ───────────────────────────────────────────
+# SISTEMA DE PARTIDAS
+# ───────────────────────────────────────────
+def simular_partida(time1_titulares: list, time2_titulares: list, time1_nome: str, time2_nome: str) -> dict:
+    """
+    Simula uma partida entre dois times baseado no overall dos jogadores
+    """
+    if not time1_titulares or not time2_titulares:
+        return None
+    
+    # Calcula overall médio dos times
+    ovr1 = sum(j["overall"] for j in time1_titulares) / len(time1_titulares)
+    ovr2 = sum(j["overall"] for j in time2_titulares) / len(time2_titulares)
+    
+    # Calcula força de ataque, meio e defesa
+    def calcular_setores(titulares):
+        ataque = sum(j["overall"] for j in titulares if j["posicao"] in ["ATA"]) or ovr1
+        meio = sum(j["overall"] for j in titulares if j["posicao"] in ["MEI", "VOL"]) or ovr1
+        defesa = sum(j["overall"] for j in titulares if j["posicao"] in ["GOL", "ZAG", "LD", "LE"]) or ovr1
+        return ataque, meio, defesa
+    
+    atk1, mid1, def1 = calcular_setores(time1_titulares)
+    atk2, mid2, def2 = calcular_setores(time2_titulares)
+    
+    # Simula gols (baseado em ataque vs defesa adversária + aleatoriedade)
+    def calcular_gols(ataque, defesa_adv, ovr_time):
+        base = (ataque / defesa_adv) if defesa_adv > 0 else 1
+        chance = base * (ovr_time / 100) * random.uniform(0.5, 1.5)
+        gols = int(chance * random.randint(0, 4))
+        return max(0, min(gols, 7))  # Limita entre 0 e 7 gols
+    
+    gols1 = calcular_gols(atk1, def2, ovr1)
+    gols2 = calcular_gols(atk2, def1, ovr2)
+    
+    # Determina eventos da partida
+    eventos = []
+    
+    # Gols do time 1
+    atacantes1 = [j for j in time1_titulares if j["posicao"] in ["ATA", "MEI"]]
+    if atacantes1:
+        for _ in range(gols1):
+            artilheiro = random.choice(atacantes1)
+            minuto = random.randint(1, 90)
+            eventos.append({
+                "minuto": minuto,
+                "time": time1_nome,
+                "jogador": artilheiro["nome"],
+                "tipo": "gol"
+            })
+    
+    # Gols do time 2
+    atacantes2 = [j for j in time2_titulares if j["posicao"] in ["ATA", "MEI"]]
+    if atacantes2:
+        for _ in range(gols2):
+            artilheiro = random.choice(atacantes2)
+            minuto = random.randint(1, 90)
+            eventos.append({
+                "minuto": minuto,
+                "time": time2_nome,
+                "jogador": artilheiro["nome"],
+                "tipo": "gol"
+            })
+    
+    # Ordena eventos por minuto
+    eventos.sort(key=lambda e: e["minuto"])
+    
+    # Determina vencedor
+    if gols1 > gols2:
+        vencedor = time1_nome
+    elif gols2 > gols1:
+        vencedor = time2_nome
+    else:
+        vencedor = None
+    
+    return {
+        "time1": time1_nome,
+        "time2": time2_nome,
+        "gols1": gols1,
+        "gols2": gols2,
+        "ovr1": round(ovr1, 1),
+        "ovr2": round(ovr2, 1),
+        "vencedor": vencedor,
+        "eventos": eventos
+    }
+
+# ───────────────────────────────────────────
 # UTILITÁRIOS
 # ───────────────────────────────────────────
 def get_membro(dados, user_id: str):
@@ -748,6 +833,193 @@ class SelectMembroView(discord.ui.View):
             pass
 
 # ───────────────────────────────────────────
+# VIEW PARA SELECIONAR ADVERSÁRIO (/jogar)
+# ───────────────────────────────────────────
+class SelecionarAdversarioView(discord.ui.View):
+    def __init__(self, user_id: int, user_nome: str, user_titulares: list):
+        super().__init__(timeout=180)
+        self.user_id = user_id
+        self.user_nome = user_nome
+        self.user_titulares = user_titulares
+    
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("Este menu não é seu.", ephemeral=True)
+            return False
+        return True
+    
+    @discord.ui.select(
+        cls=discord.ui.UserSelect,
+        placeholder="Selecione seu adversário",
+        min_values=1,
+        max_values=1
+    )
+    async def select_adversario(self, interaction: discord.Interaction, select: discord.ui.UserSelect):
+        adversario = select.values[0]
+        
+        if adversario.id == self.user_id:
+            await interaction.response.send_message("❌ Você não pode jogar contra si mesmo!", ephemeral=True)
+            return
+        
+        dados = carregar_dados()
+        adv_id = str(adversario.id)
+        
+        if adv_id not in dados["membros"]:
+            await interaction.response.send_message(
+                f"❌ **{adversario.display_name}** ainda não está registrado na liga!",
+                ephemeral=True
+            )
+            return
+        
+        adv_dados = dados["membros"][adv_id]
+        adv_titulares = adv_dados.get("titulares", [])
+        
+        if not adv_titulares:
+            await interaction.response.send_message(
+                f"❌ **{adversario.display_name}** não tem titulares escalados!",
+                ephemeral=True
+            )
+            return
+        
+        adv_time_nome = adv_dados.get("time_nome") or f"Time de {adversario.display_name}"
+        
+        # Simula a partida
+        resultado = simular_partida(
+            self.user_titulares,
+            adv_titulares,
+            self.user_nome,
+            adv_time_nome
+        )
+        
+        # Cria embed do resultado
+        if resultado["vencedor"] == self.user_nome:
+            cor = 0x2ecc71
+            titulo = "🏆 VITÓRIA!"
+        elif resultado["vencedor"] == adv_time_nome:
+            cor = 0xe74c3c
+            titulo = "😞 DERROTA"
+        else:
+            cor = 0xf39c12
+            titulo = "🤝 EMPATE"
+        
+        embed = discord.Embed(
+            title=titulo,
+            description=f"**{resultado['time1']}** {resultado['gols1']} x {resultado['gols2']} **{resultado['time2']}**",
+            color=cor
+        )
+        
+        embed.add_field(
+            name=f"{resultado['time1']} (OVR {resultado['ovr1']})",
+            value=f"⚽ {resultado['gols1']} gol{'s' if resultado['gols1'] != 1 else ''}",
+            inline=True
+        )
+        
+        embed.add_field(
+            name=f"{resultado['time2']} (OVR {resultado['ovr2']})",
+            value=f"⚽ {resultado['gols2']} gol{'s' if resultado['gols2'] != 1 else ''}",
+            inline=True
+        )
+        
+        # Adiciona eventos
+        if resultado["eventos"]:
+            eventos_texto = []
+            for evento in resultado["eventos"]:
+                eventos_texto.append(
+                    f"`{evento['minuto']}'` ⚽ **{evento['jogador']}** ({evento['time']})"
+                )
+            
+            embed.add_field(
+                name="📋 Lances da Partida",
+                value="\n".join(eventos_texto)[:1024],
+                inline=False
+            )
+        
+        embed.set_footer(text=f"TCSF Guru · Partida Amistosa · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        # Desabilita o menu
+        for child in self.children:
+            child.disabled = True
+        
+        await interaction.response.edit_message(embed=embed, view=self)
+
+# ───────────────────────────────────────────
+# VIEW PARA SELECIONAR JOGADOR (/vercarta)
+# ───────────────────────────────────────────
+class VerCartaSelectView(discord.ui.View):
+    def __init__(self, jogadores: list, alvo_nome: str, alvo_avatar: str):
+        super().__init__(timeout=180)
+        self.jogadores = sorted(jogadores, key=lambda j: j["overall"], reverse=True)
+        self.alvo_nome = alvo_nome
+        self.alvo_avatar = alvo_avatar
+        
+        # Adiciona select menu
+        self.add_item(VerCartaSelect(self.jogadores, self.alvo_nome, self.alvo_avatar))
+
+class VerCartaSelect(discord.ui.Select):
+    def __init__(self, jogadores: list, alvo_nome: str, alvo_avatar: str):
+        self.jogadores_dict = {f"{j['nome']}_{j['overall']}": j for j in jogadores}
+        
+        options = []
+        for jogador in jogadores[:25]:  # Discord limita a 25 opções
+            pos_full = POSICAO_FULL.get(jogador["posicao"], jogador["posicao"])
+            
+            # Define emoji baseado no overall
+            if jogador["overall"] >= 90:
+                emoji = "🏆"
+            elif jogador["overall"] >= 85:
+                emoji = "💎"
+            elif jogador["overall"] >= 80:
+                emoji = "⭐"
+            else:
+                emoji = "⚽"
+            
+            options.append(
+                discord.SelectOption(
+                    label=f"{jogador['nome']} · {jogador['overall']} OVR",
+                    description=f"{pos_full} · {jogador['clube']}",
+                    value=f"{jogador['nome']}_{jogador['overall']}",
+                    emoji=emoji
+                )
+            )
+        
+        super().__init__(
+            placeholder=f"Selecione um jogador ({len(jogadores)} no elenco)",
+            options=options,
+            min_values=1,
+            max_values=1
+        )
+        
+        self.alvo_nome = alvo_nome
+        self.alvo_avatar = alvo_avatar
+    
+    async def callback(self, interaction: discord.Interaction):
+        jogador = self.jogadores_dict[self.values[0]]
+        
+        pos_full = POSICAO_FULL.get(jogador["posicao"], jogador["posicao"])
+        raridade = calcular_raridade(jogador)
+        
+        embed = discord.Embed(
+            title=f"{jogador['nome']}",
+            description=f"{medalha_overall(jogador['overall'])} · {estrelas_overall(jogador['overall'])}",
+            color=cor_por_overall(jogador["overall"])
+        )
+        
+        embed.add_field(name="📍 Posição", value=f"{pos_full} (`{jogador['posicao']}`)", inline=True)
+        embed.add_field(name="📊 Overall", value=f"**{jogador['overall']}**", inline=True)
+        embed.add_field(name="🎽 Clube", value=jogador["clube"], inline=True)
+        embed.add_field(name="💰 Valor de Mercado", value=fmt_reais(jogador["preco"]), inline=True)
+        embed.add_field(name="🎴 Raridade", value=raridade, inline=True)
+        embed.add_field(name="💵 Valor de Venda", value=fmt_reais(jogador["preco"] * 0.6), inline=True)
+        
+        if jogador.get("imagem"):
+            embed.set_image(url=jogador["imagem"])
+        
+        embed.set_author(name=f"Elenco de {self.alvo_nome}", icon_url=self.alvo_avatar)
+        embed.set_footer(text=f"TCSF Guru · Liga · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+# ───────────────────────────────────────────
 # BOT
 # ───────────────────────────────────────────
 intents = discord.Intents.default()
@@ -772,7 +1044,6 @@ async def on_ready():
 # ───────────────────────────────────────────
 # COMANDOS
 # ───────────────────────────────────────────
-
 @tree.command(name="addplayer", description="[ADM] Adiciona um jogador ao banco")
 @app_commands.describe(
     nome="Nome do jogador",
@@ -937,16 +1208,16 @@ async def obter(interaction: discord.Interaction):
 async def daily(interaction: discord.Interaction):
     user_id = interaction.user.id
     agora = datetime.now()
-
+    
     if user_id in cooldowns_daily:
         ultimo_uso = cooldowns_daily[user_id]
         tempo_restante = timedelta(hours=24) - (agora - ultimo_uso)
-
+        
         if tempo_restante.total_seconds() > 0:
             horas = int(tempo_restante.total_seconds() // 3600)
             minutos = int((tempo_restante.total_seconds() % 3600) // 60)
             segundos = int(tempo_restante.total_seconds() % 60)
-
+            
             embed = discord.Embed(
                 title="⏰ Daily já resgatado!",
                 description=f"Você já resgatou o seu daily hoje.\n\nVolte em **{horas}h {minutos}m {segundos}s**.",
@@ -955,17 +1226,17 @@ async def daily(interaction: discord.Interaction):
             embed.set_footer(text="TCSF Guru · Liga")
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-
+    
     cooldowns_daily[user_id] = agora
-
+    
     dados = carregar_dados()
     user_id_str = str(interaction.user.id)
     membro = get_membro(dados, user_id_str)
-
+    
     bonus = 200_000
     membro["saldo"] = membro.get("saldo", 0) + bonus
     salvar_dados(dados)
-
+    
     embed = discord.Embed(
         title="💰 Daily Resgatado!",
         description=f"Você recebeu **{fmt_reais(bonus)}** na sua carteira!\n\nVolte amanhã para resgatar novamente.",
@@ -1310,6 +1581,95 @@ async def setar(interaction: discord.Interaction, nome: str):
     embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     
     view = SelectMembroView(admin_id=interaction.user.id, jogador=jogador)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+@tree.command(name="jogar", description="Simula uma partida contra outro jogador")
+async def jogar(interaction: discord.Interaction):
+    dados = carregar_dados()
+    user_id = str(interaction.user.id)
+    membro_dados = get_membro(dados, user_id)
+    
+    titulares = membro_dados.get("titulares", [])
+    
+    if not titulares:
+        embed = discord.Embed(
+            title="❌ Sem Titulares",
+            description="Você precisa ter titulares escalados para jogar!\n\nUse `/promover` ou `/obter` para montar seu time.",
+            color=0xe74c3c
+        )
+        embed.set_footer(text="TCSF Guru · Liga")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    if len(titulares) < 11:
+        embed = discord.Embed(
+            title="⚠️ Time Incompleto",
+            description=f"Você tem apenas **{len(titulares)}/11** titulares escalados.\n\nÉ recomendado ter 11 jogadores para melhores resultados!",
+            color=0xf39c12
+        )
+        embed.set_footer(text="TCSF Guru · Liga")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    time_nome = membro_dados.get("time_nome") or f"Time de {interaction.user.display_name}"
+    ovr_medio = round(sum(j["overall"] for j in titulares) / len(titulares), 1)
+    
+    embed = discord.Embed(
+        title="⚽ Iniciar Partida",
+        description=f"**{time_nome}** está pronto para jogar!\n\n**Overall médio:** {ovr_medio}\n**Titulares:** {len(titulares)}/11\n\nSelecione seu adversário:",
+        color=0x1e90ff
+    )
+    
+    embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
+    embed.set_footer(text="TCSF Guru · Liga")
+    
+    view = SelecionarAdversarioView(interaction.user.id, time_nome, titulares)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+@tree.command(name="vercarta", description="Visualiza a carta de um jogador de qualquer usuário")
+@app_commands.describe(usuario="Usuário dono do jogador (opcional, padrão: você)")
+async def vercarta(interaction: discord.Interaction, usuario: discord.Member = None):
+    dados = carregar_dados()
+    alvo = usuario or interaction.user
+    user_id = str(alvo.id)
+    
+    if user_id not in dados["membros"]:
+        await interaction.response.send_message(
+            f"❌ **{alvo.display_name}** ainda não está registrado na liga!",
+            ephemeral=True
+        )
+        return
+    
+    membro_dados = dados["membros"][user_id]
+    
+    # Combina elenco e titulares (sem duplicatas)
+    todos_jogadores = membro_dados.get("elenco", []) + membro_dados.get("titulares", [])
+    
+    vistos = set()
+    jogadores_unicos = []
+    for j in todos_jogadores:
+        chave = f"{j['nome']}_{j['overall']}"
+        if chave not in vistos:
+            vistos.add(chave)
+            jogadores_unicos.append(j)
+    
+    if not jogadores_unicos:
+        await interaction.response.send_message(
+            f"❌ **{alvo.display_name}** não tem jogadores no elenco!",
+            ephemeral=True
+        )
+        return
+    
+    embed = discord.Embed(
+        title=f"🎴 Elenco de {alvo.display_name}",
+        description=f"Selecione um jogador para ver a carta completa.\n\n**Total:** {len(jogadores_unicos)} jogador{'es' if len(jogadores_unicos) != 1 else ''}",
+        color=0x1e90ff
+    )
+    
+    embed.set_author(name=alvo.display_name, icon_url=alvo.display_avatar.url)
+    embed.set_footer(text="TCSF Guru · Liga")
+    
+    view = VerCartaSelectView(jogadores_unicos, alvo.display_name, alvo.display_avatar.url)
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 @tree.command(name="limpar_duplicatas", description="[ADM] Remove jogadores duplicados dos elencos")
