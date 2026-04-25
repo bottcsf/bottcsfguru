@@ -187,23 +187,23 @@ class ListaJogadoresView(discord.ui.View):
         self.pagina = pagina
         self.itens_por_pagina = 10
         self.total_paginas = (len(self.jogadores) - 1) // self.itens_por_pagina + 1
-        
+
         self.atualizar_botoes()
 
     def atualizar_botoes(self):
         self.clear_items()
-        
+
         # Botões de navegação
         if self.pagina > 0:
             self.add_item(BotaoAnterior())
-        
+
         if self.pagina < self.total_paginas - 1:
             self.add_item(BotaoProximo())
-        
+
         # Botões de jogadores da página atual
         inicio = self.pagina * self.itens_por_pagina
         fim = min(inicio + self.itens_por_pagina, len(self.jogadores))
-        
+
         for i in range(inicio, fim):
             jogador = self.jogadores[i]
             self.add_item(BotaoJogador(jogador, i - inicio))
@@ -212,16 +212,16 @@ class ListaJogadoresView(discord.ui.View):
         dados = carregar_dados()
         membro = get_membro(dados, str(self.user_id))
         saldo = membro.get("saldo", 0)
-        
+
         embed = discord.Embed(
             title="🏪 Mercado de Transferências",
             description=f"**Seu saldo:** {fmt_reais(saldo)}\n\nSelecione um jogador para comprar:",
             color=0x1e90ff
         )
-        
+
         inicio = self.pagina * self.itens_por_pagina
         fim = min(inicio + self.itens_por_pagina, len(self.jogadores))
-        
+
         for i in range(inicio, fim):
             jogador = self.jogadores[i]
             pos_full = POSICAO_FULL.get(jogador["posicao"], jogador["posicao"])
@@ -232,7 +232,7 @@ class ListaJogadoresView(discord.ui.View):
                 value=f"{pos_full} · {jogador['clube']}\n💰 {fmt_reais(jogador['preco'])}",
                 inline=True
             )
-        
+
         embed.set_footer(text=f"TCSF Guru · Página {self.pagina + 1}/{self.total_paginas} · {len(self.jogadores)} jogadores disponíveis")
         return embed
 
@@ -242,34 +242,31 @@ class ListaJogadoresView(discord.ui.View):
             return False
         return True
 
-
 class BotaoAnterior(discord.ui.Button):
     def __init__(self):
         super().__init__(label="◀ Anterior", style=discord.ButtonStyle.secondary, row=0)
-    
+
     async def callback(self, interaction: discord.Interaction):
         view: ListaJogadoresView = self.view
         view.pagina -= 1
         view.atualizar_botoes()
         await interaction.response.edit_message(embed=view.get_embed(), view=view)
 
-
 class BotaoProximo(discord.ui.Button):
     def __init__(self):
         super().__init__(label="Próximo ▶", style=discord.ButtonStyle.secondary, row=0)
-    
+
     async def callback(self, interaction: discord.Interaction):
         view: ListaJogadoresView = self.view
         view.pagina += 1
         view.atualizar_botoes()
         await interaction.response.edit_message(embed=view.get_embed(), view=view)
 
-
 class BotaoJogador(discord.ui.Button):
     def __init__(self, jogador: dict, posicao: int):
         self.jogador = jogador
         label = f"{jogador['nome'][:20]} · {fmt_reais(jogador['preco'])}"
-        
+
         # Define cor do botão baseado no overall
         if jogador["overall"] >= 90:
             style = discord.ButtonStyle.success
@@ -277,21 +274,21 @@ class BotaoJogador(discord.ui.Button):
             style = discord.ButtonStyle.primary
         else:
             style = discord.ButtonStyle.secondary
-        
+
         super().__init__(
             label=label,
             style=style,
             row=(posicao // 5) + 1  # Organiza em linhas
         )
-    
+
     async def callback(self, interaction: discord.Interaction):
         dados = carregar_dados()
         user_id = str(interaction.user.id)
         membro = get_membro(dados, user_id)
-        
+
         preco = self.jogador.get("preco", 0)
         saldo = membro.get("saldo", 0)
-        
+
         # Verifica se tem saldo suficiente
         if saldo < preco:
             embed = discord.Embed(
@@ -304,7 +301,7 @@ class BotaoJogador(discord.ui.Button):
             embed.add_field(name="Faltam", value=fmt_reais(preco - saldo), inline=True)
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        
+
         # Verifica se já tem o jogador
         if any(j["nome"].lower() == self.jogador["nome"].lower() for j in membro.get("elenco", [])):
             await interaction.response.send_message(
@@ -312,14 +309,14 @@ class BotaoJogador(discord.ui.Button):
                 ephemeral=True
             )
             return
-        
+
         # Realiza a compra
         membro["saldo"] -= preco
         membro["elenco"].append(self.jogador)
         salvar_dados(dados)
-        
+
         pos_full = POSICAO_FULL.get(self.jogador["posicao"], self.jogador["posicao"])
-        
+
         embed = discord.Embed(
             title="✅ Transferência Concluída!",
             description=f"**{self.jogador['nome']}** foi contratado com sucesso!\n\n{medalha_overall(self.jogador['overall'])} · {estrelas_overall(self.jogador['overall'])}",
@@ -331,19 +328,18 @@ class BotaoJogador(discord.ui.Button):
         embed.add_field(name="Valor pago", value=fmt_reais(preco), inline=True)
         embed.add_field(name="Novo saldo", value=fmt_reais(membro["saldo"]), inline=True)
         embed.add_field(name="Elenco", value=f"{len(membro['elenco'])} jogadores", inline=True)
-        
+
         if self.jogador.get("imagem"):
             embed.set_thumbnail(url=self.jogador["imagem"])
-        
+
         embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
         embed.set_footer(text=f"TCSF Guru · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
-        
+
         await interaction.response.send_message(embed=embed)
-        
+
         # Atualiza a view
         view: ListaJogadoresView = self.view
         await interaction.message.edit(embed=view.get_embed())
-
 
 # ───────────────────────────────────────────
 # VIEW COM BOTÕES DO /obter
@@ -453,6 +449,85 @@ class BotoesObter(discord.ui.View):
         await interaction.followup.send(embed=embed, ephemeral=True)
 
 # ───────────────────────────────────────────
+# VIEW COM SELECT MENU PARA SETAR JOGADOR
+# ───────────────────────────────────────────
+class SelectMembroView(discord.ui.View):
+    def __init__(self, admin_id: int, jogador: dict):
+        super().__init__(timeout=180)
+        self.admin_id = admin_id
+        self.jogador = jogador
+        
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user.id != self.admin_id:
+            await interaction.response.send_message("Apenas o administrador que executou o comando pode usar este menu.", ephemeral=True)
+            return False
+        return True
+    
+    @discord.ui.select(
+        cls=discord.ui.UserSelect,
+        placeholder="Selecione o membro que receberá o jogador",
+        min_values=1,
+        max_values=1
+    )
+    async def select_membro(self, interaction: discord.Interaction, select: discord.ui.UserSelect):
+        membro_selecionado = select.values[0]
+        
+        dados = carregar_dados()
+        user_id = str(membro_selecionado.id)
+        membro_dados = get_membro(dados, user_id)
+        
+        # Verifica se já tem o jogador
+        if any(j["nome"].lower() == self.jogador["nome"].lower() for j in membro_dados.get("elenco", [])):
+            await interaction.response.send_message(
+                f"❌ **{membro_selecionado.display_name}** já possui **{self.jogador['nome']}** no elenco!",
+                ephemeral=True
+            )
+            return
+        
+        # Adiciona o jogador ao elenco
+        membro_dados["elenco"].append(self.jogador)
+        salvar_dados(dados)
+        
+        pos_full = POSICAO_FULL.get(self.jogador["posicao"], self.jogador["posicao"])
+        
+        # Embed de confirmação
+        embed = discord.Embed(
+            title="✅ Jogador Setado com Sucesso!",
+            description=f"**{self.jogador['nome']}** foi adicionado ao elenco de **{membro_selecionado.display_name}**.",
+            color=0x2ecc71
+        )
+        embed.add_field(name="Jogador", value=self.jogador['nome'], inline=True)
+        embed.add_field(name="Overall", value=f"{self.jogador['overall']}", inline=True)
+        embed.add_field(name="Posição", value=pos_full, inline=True)
+        embed.add_field(name="Clube", value=self.jogador['clube'], inline=True)
+        embed.add_field(name="Valor", value=fmt_reais(self.jogador['preco']), inline=True)
+        embed.add_field(name="Elenco Total", value=f"{len(membro_dados['elenco'])} jogadores", inline=True)
+        
+        if self.jogador.get("imagem"):
+            embed.set_thumbnail(url=self.jogador["imagem"])
+        
+        embed.set_author(name=membro_selecionado.display_name, icon_url=membro_selecionado.display_avatar.url)
+        embed.set_footer(text=f"Setado por {interaction.user.display_name} • {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+        
+        # Desabilita o select após uso
+        for child in self.children:
+            child.disabled = True
+        
+        await interaction.response.edit_message(embed=embed, view=self)
+        
+        # Notifica o membro (opcional)
+        try:
+            notif_embed = discord.Embed(
+                title="🎁 Novo Jogador Recebido!",
+                description=f"Você recebeu **{self.jogador['nome']}** ({self.jogador['overall']} OVR) no seu elenco!",
+                color=cor_por_overall(self.jogador["overall"])
+            )
+            notif_embed.set_footer(text="TCSF Guru · Liga")
+            await membro_selecionado.send(embed=notif_embed)
+        except:
+            pass  # Caso o membro tenha DM desabilitada
+
+# ───────────────────────────────────────────
 # BOT
 # ───────────────────────────────────────────
 intents = discord.Intents.default()
@@ -508,11 +583,11 @@ async def addplayer(
 
     embed = discord.Embed(
         title=f"{nome}",
-        description=f"{medalha_overall(overall)} · {estrelas_overall(overall)}\n\n*Jogador adicionado ao banco da liga.*",
+        description=f"{medalha_overall(overall)} · {estrelas_overall(overall)}\n\nJogador adicionado ao banco da liga.",
         color=cor_por_overall(overall)
     )
     embed.add_field(name="Posição", value=pos_full, inline=True)
-    embed.add_field(name="Overall", value=f"**{overall}**", inline=True)
+    embed.add_field(name="Overall", value=f"{overall}", inline=True)
     embed.add_field(name="Clube", value=clube, inline=True)
     embed.add_field(name="Valor de Mercado", value=fmt_reais(preco), inline=True)
     embed.add_field(name="Raridade", value=raridade, inline=True)
@@ -531,7 +606,7 @@ async def addplayer(
 async def comprar(interaction: discord.Interaction):
     dados = carregar_dados()
     disponiveis = dados.get("jogadores_disponiveis", [])
-    
+
     if not disponiveis:
         embed = discord.Embed(
             title="🏪 Mercado Vazio",
@@ -541,10 +616,10 @@ async def comprar(interaction: discord.Interaction):
         embed.set_footer(text="TCSF Guru · Liga")
         await interaction.response.send_message(embed=embed, ephemeral=True)
         return
-    
+
     view = ListaJogadoresView(interaction.user.id, disponiveis)
     embed = view.get_embed()
-    
+
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
 # ───────────────────────────────────────────
@@ -553,14 +628,14 @@ async def comprar(interaction: discord.Interaction):
 @tree.command(name="obter", description="Sorteia um jogador do banco para o seu elenco")
 async def obter(interaction: discord.Interaction):
     user_id = interaction.user.id
-    
+
     # ✅ VERIFICAÇÃO DE COOLDOWN (exceto para admins)
     if not is_admin(interaction):
         agora = datetime.now()
         if user_id in cooldowns_obter:
             ultimo_uso = cooldowns_obter[user_id]
             tempo_restante = timedelta(minutes=20) - (agora - ultimo_uso)
-            
+
             if tempo_restante.total_seconds() > 0:
                 minutos = int(tempo_restante.total_seconds() // 60)
                 segundos = int(tempo_restante.total_seconds() % 60)
@@ -573,7 +648,7 @@ async def obter(interaction: discord.Interaction):
                 embed.set_footer(text="TCSF Guru · Liga")
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
-        
+
         # Atualiza o cooldown
         cooldowns_obter[user_id] = agora
 
@@ -607,14 +682,14 @@ async def obter(interaction: discord.Interaction):
         title=f"{jogador['nome']}",
         description=(
             f"{medalha_overall(jogador['overall'])} · {estrelas_overall(jogador['overall'])}\n\n"
-            f"**{interaction.user.display_name}** recebeu um novo reforço!\n"
-            f"**Raridade:** {raridade}\n\n"
+            f"{interaction.user.display_name} recebeu um novo reforço!\n"
+            f"Raridade: {raridade}\n\n"
             f"Use os botões abaixo para escalar ou vender."
         ),
         color=cor
     )
     embed.add_field(name="Posição", value=pos_full, inline=True)
-    embed.add_field(name="Overall", value=f"**{jogador['overall']}**", inline=True)
+    embed.add_field(name="Overall", value=f"{jogador['overall']}", inline=True)
     embed.add_field(name="Clube", value=jogador["clube"], inline=True)
     embed.add_field(name="Valor de Mercado", value=fmt_reais(jogador["preco"]), inline=True)
     embed.add_field(name="Valor de Venda", value=fmt_reais(jogador["preco"] * 0.6), inline=True)
@@ -629,9 +704,9 @@ async def obter(interaction: discord.Interaction):
     view = BotoesObter(user_id=interaction.user.id, jogador=jogador)
     await interaction.response.send_message(embed=embed, view=view)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /promover
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="promover", description="Promove um jogador do seu elenco para titular")
 @app_commands.describe(nome="Nome do jogador que deseja promover para titular")
 async def promover(interaction: discord.Interaction, nome: str):
@@ -646,14 +721,14 @@ async def promover(interaction: discord.Interaction, nome: str):
     if not jogador:
         embed = discord.Embed(
             title="Jogador não encontrado",
-            description=f"**{nome}** não está no seu elenco.\nUse `/time` para ver seus jogadores.",
+            description=f"{nome} não está no seu elenco.\nUse /time para ver seus jogadores.",
             color=0xe74c3c
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
         return
 
     if any(j["nome"].lower() == nome.lower() for j in titulares):
-        await interaction.response.send_message(f"**{nome}** já está entre os titulares.", ephemeral=True)
+        await interaction.response.send_message(f"{nome} já está entre os titulares.", ephemeral=True)
         return
 
     if len(titulares) >= 11:
@@ -668,12 +743,12 @@ async def promover(interaction: discord.Interaction, nome: str):
 
     embed = discord.Embed(
         title=f"{jogador['nome']} · Titular",
-        description=f"Escalado com sucesso para o time titular!\n\n{estrelas_overall(jogador['overall'])}  ·  {medalha_overall(jogador['overall'])}",
+        description=f"Escalado com sucesso para o time titular!\n\n{estrelas_overall(jogador['overall'])} · {medalha_overall(jogador['overall'])}",
         color=cor_por_overall(jogador["overall"])
     )
     embed.add_field(name="Posição", value=pos_full, inline=True)
-    embed.add_field(name="Overall", value=f"**{jogador['overall']}**", inline=True)
-    embed.add_field(name="Titulares", value=f"**{len(titulares)}/11**", inline=True)
+    embed.add_field(name="Overall", value=f"{jogador['overall']}", inline=True)
+    embed.add_field(name="Titulares", value=f"{len(titulares)}/11", inline=True)
 
     if jogador.get("imagem"):
         embed.set_thumbnail(url=jogador["imagem"])
@@ -682,9 +757,9 @@ async def promover(interaction: discord.Interaction, nome: str):
     embed.set_footer(text="TCSF Guru · Liga")
     await interaction.response.send_message(embed=embed)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /elenco
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="elenco", description="Mostra o elenco titular (11 jogadores)")
 @app_commands.describe(membro="Veja o elenco de outro membro (opcional)")
 async def elenco(interaction: discord.Interaction, membro: discord.Member = None):
@@ -700,7 +775,7 @@ async def elenco(interaction: discord.Interaction, membro: discord.Member = None
     if not titulares:
         embed = discord.Embed(
             title="Sem titulares",
-            description=f"{'Você não tem' if not membro else f'{alvo.display_name} não tem'} titulares definidos.\nUse `/promover` para escalar jogadores.",
+            description=f"{'Você não tem' if not membro else f'{alvo.display_name} não tem'} titulares definidos.\nUse /promover para escalar jogadores.",
             color=0x95a5a6
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -710,8 +785,8 @@ async def elenco(interaction: discord.Interaction, membro: discord.Member = None
     media = round(sum(j["overall"] for j in titulares) / len(titulares), 1)
 
     embed = discord.Embed(
-        title=f"{time_nome}  ·  {time_sigla}",
-        description=f"**{len(titulares)}/11** titulares escalados  ·  Overall médio: **{media}**\n{estrelas_overall(int(media))}",
+        title=f"{time_nome} · {time_sigla}",
+        description=f"{len(titulares)}/11 titulares escalados · Overall médio: {media}\n{estrelas_overall(int(media))}",
         color=cor_por_overall(int(media))
     )
 
@@ -725,21 +800,21 @@ async def elenco(interaction: discord.Interaction, membro: discord.Member = None
             pos_full = POSICAO_FULL.get(pos, pos)
             linhas = []
             for j in grupos[pos]:
-                linhas.append(f"`{j['overall']}` {estrelas_overall(j['overall'])}  **{j['nome']}** — {j['clube']}")
+                linhas.append(f"{j['overall']} {estrelas_overall(j['overall'])} {j['nome']} — {j['clube']}")
             embed.add_field(name=pos_full, value="\n".join(linhas), inline=False)
 
     for pos, jogadores in grupos.items():
         if pos not in posicoes_ordem:
-            linhas = [f"`{j['overall']}` **{j['nome']}** — {j['clube']}" for j in jogadores]
+            linhas = [f"{j['overall']} {j['nome']} — {j['clube']}" for j in jogadores]
             embed.add_field(name=pos, value="\n".join(linhas), inline=False)
 
     embed.set_author(name=alvo.display_name, icon_url=alvo.display_avatar.url)
     embed.set_footer(text=f"TCSF Guru · Liga · {datetime.now().strftime('%d/%m/%Y')}")
     await interaction.response.send_message(embed=embed)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /carta
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="carta", description="Mostra a carta de um jogador do seu elenco")
 @app_commands.describe(nome="Nome do jogador")
 async def carta(interaction: discord.Interaction, nome: str):
@@ -759,7 +834,7 @@ async def carta(interaction: discord.Interaction, nome: str):
     if not jogador:
         embed = discord.Embed(
             title="Jogador não encontrado",
-            description=f"**{nome}** não está no seu elenco.",
+            description=f"{nome} não está no seu elenco.",
             color=0xe74c3c
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -771,13 +846,13 @@ async def carta(interaction: discord.Interaction, nome: str):
     embed = discord.Embed(
         title=jogador["nome"],
         description=(
-            f"{medalha_overall(jogador['overall'])}  ·  {estrelas_overall(jogador['overall'])}\n"
-            f"{'**[ TITULAR ]**' if eh_titular else '*Reserva*'}"
+            f"{medalha_overall(jogador['overall'])} · {estrelas_overall(jogador['overall'])}\n"
+            f"{'[ TITULAR ]' if eh_titular else 'Reserva'}"
         ),
         color=cor_por_overall(jogador["overall"])
     )
     embed.add_field(name="Posição", value=pos_full, inline=True)
-    embed.add_field(name="Overall", value=f"**{jogador['overall']}**", inline=True)
+    embed.add_field(name="Overall", value=f"{jogador['overall']}", inline=True)
     embed.add_field(name="Clube", value=jogador["clube"], inline=True)
     embed.add_field(name="Valor de Mercado", value=fmt_reais(jogador["preco"]), inline=True)
 
@@ -788,9 +863,9 @@ async def carta(interaction: discord.Interaction, nome: str):
     embed.set_footer(text="TCSF Guru · Liga")
     await interaction.response.send_message(embed=embed)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /saldo
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="saldo", description="Veja seu saldo na liga")
 @app_commands.describe(membro="Ver saldo de outro membro (opcional)")
 async def saldo(interaction: discord.Interaction, membro: discord.Member = None):
@@ -817,17 +892,17 @@ async def saldo(interaction: discord.Interaction, membro: discord.Member = None)
 
     embed = discord.Embed(
         title="Carteira do Clube",
-        description=f"Nível financeiro: **{nivel}**",
+        description=f"Nível financeiro: {nivel}",
         color=cor
     )
     embed.set_author(name=alvo.display_name, icon_url=alvo.display_avatar.url)
-    embed.add_field(name="Saldo Disponível", value=f"**{fmt_reais(coins)}**", inline=False)
+    embed.add_field(name="Saldo Disponível", value=f"{fmt_reais(coins)}", inline=False)
     embed.set_footer(text=f"TCSF Guru · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     await interaction.response.send_message(embed=embed)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /time
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="time", description="Veja ou defina o nome e sigla do seu time")
 @app_commands.describe(
     nome="Nome do seu time (opcional)",
@@ -865,11 +940,11 @@ async def time(interaction: discord.Interaction, nome: str = None, sigla: str = 
     media = round(sum(j["overall"] for j in titulares_lista) / len(titulares_lista), 1) if titulares_lista else 0
 
     embed = discord.Embed(
-        title=f"{time_nome}  [{time_sigla}]",
+        title=f"{time_nome} [{time_sigla}]",
         description=(
-            f"Overall médio: **{media if media else '—'}**  ·  "
-            f"Titulares: **{len(titulares_lista)}/11**\n"
-            f"Saldo: **{fmt_reais(membro_dados['saldo'])}**"
+            f"Overall médio: {media if media else '—'} · "
+            f"Titulares: {len(titulares_lista)}/11\n"
+            f"Saldo: {fmt_reais(membro_dados['saldo'])}"
         ),
         color=cor_por_overall(int(media)) if media else 0x95a5a6
     )
@@ -880,23 +955,23 @@ async def time(interaction: discord.Interaction, nome: str = None, sigla: str = 
         # Ordena por overall decrescente
         ordenados = sorted(elenco_lista, key=lambda j: j["overall"], reverse=True)
         linhas = [
-            f"`{j['overall']}` **{j['nome']}** ({j['posicao']}) — {j['clube']}"
+            f"{j['overall']} {j['nome']} ({j['posicao']}) — {j['clube']}"
             for j in ordenados
         ]
         embed.add_field(
-            name=f"Elenco Completo  ({len(elenco_lista)} jogadores)",
+            name=f"Elenco Completo ({len(elenco_lista)} jogadores)",
             value="\n".join(linhas)[:1024],
             inline=False
         )
     else:
-        embed.add_field(name="Elenco", value="Nenhum jogador ainda. Use `/obter`!", inline=False)
+        embed.add_field(name="Elenco", value="Nenhum jogador ainda. Use /obter!", inline=False)
 
     embed.set_footer(text=f"TCSF Guru · Liga · {datetime.now().strftime('%d/%m/%Y')}")
     await interaction.response.send_message(embed=embed)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 # /listaplayers (só ADM)
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 @tree.command(name="listaplayers", description="[ADM] Lista todos os jogadores disponíveis no banco")
 async def listaplayers(interaction: discord.Interaction):
     if not is_admin(interaction):
@@ -915,22 +990,88 @@ async def listaplayers(interaction: discord.Interaction):
 
     embed = discord.Embed(
         title=f"Banco de Jogadores",
-        description=f"**{len(disponiveis)}** jogadores disponíveis no banco da liga.",
+        description=f"{len(disponiveis)} jogadores disponíveis no banco da liga.",
         color=0x1e90ff
     )
 
     linhas = []
     for j in ordenados:
-        img_tag = " `🖼`" if j.get("imagem") else ""
+        img_tag = " 🖼" if j.get("imagem") else ""
         linhas.append(
-            f"`{j['overall']}` **{j['nome']}** · {j['posicao']} · {j['clube']} · {fmt_reais(j['preco'])}{img_tag}"
+            f"{j['overall']} {j['nome']} · {j['posicao']} · {j['clube']} · {fmt_reais(j['preco'])}{img_tag}"
         )
 
     embed.add_field(name="Jogadores", value="\n".join(linhas)[:4000], inline=False)
     embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
+# /setar (só ADM)
+# ───────────────────────────────────────────
+@tree.command(name="setar", description="[ADM] Adiciona um jogador do banco ao elenco de um membro")
+@app_commands.describe(nome="Nome do jogador que deseja setar")
+async def setar(interaction: discord.Interaction, nome: str):
+    if not is_admin(interaction):
+        await interaction.response.send_message("❌ Apenas administradores podem usar este comando.", ephemeral=True)
+        return
+    
+    dados = carregar_dados()
+    disponiveis = dados.get("jogadores_disponiveis", [])
+    
+    if not disponiveis:
+        embed = discord.Embed(
+            title="❌ Banco Vazio",
+            description="Não há jogadores disponíveis no banco.\nUse `/addplayer` para adicionar jogadores.",
+            color=0xe74c3c
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    # Procura o jogador (busca flexível)
+    jogador = None
+    for j in disponiveis:
+        if nome.lower() in j["nome"].lower() or j["nome"].lower() in nome.lower():
+            jogador = j
+            break
+    
+    if not jogador:
+        # Lista sugestões se não encontrar
+        sugestoes = [j["nome"] for j in disponiveis if nome.lower()[0] == j["nome"].lower()[0]][:5]
+        sugestoes_texto = "\n".join(f"• {s}" for s in sugestoes) if sugestoes else "Nenhuma sugestão disponível."
+        
+        embed = discord.Embed(
+            title="❌ Jogador Não Encontrado",
+            description=f"O jogador **{nome}** não está no banco de jogadores.\n\n**Sugestões:**\n{sugestoes_texto}",
+            color=0xe74c3c
+        )
+        embed.set_footer(text="Use /listaplayers para ver todos os jogadores")
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    # Mostra informações do jogador e select menu
+    pos_full = POSICAO_FULL.get(jogador["posicao"], jogador["posicao"])
+    raridade = calcular_raridade(jogador)
+    
+    embed = discord.Embed(
+        title=f"⚙️ Setar Jogador: {jogador['nome']}",
+        description=f"{medalha_overall(jogador['overall'])} · {estrelas_overall(jogador['overall'])}\n\nSelecione o membro que receberá este jogador:",
+        color=cor_por_overall(jogador["overall"])
+    )
+    embed.add_field(name="Posição", value=pos_full, inline=True)
+    embed.add_field(name="Overall", value=f"{jogador['overall']}", inline=True)
+    embed.add_field(name="Clube", value=jogador['clube'], inline=True)
+    embed.add_field(name="Valor de Mercado", value=fmt_reais(jogador['preco']), inline=True)
+    embed.add_field(name="Raridade", value=raridade, inline=True)
+    
+    if jogador.get("imagem"):
+        embed.set_thumbnail(url=jogador["imagem"])
+    
+    embed.set_footer(text=f"TCSF Guru · ADM · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    
+    view = SelectMembroView(admin_id=interaction.user.id, jogador=jogador)
+    await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+# ───────────────────────────────────────────
 # INICIAR
-# ─────────────────────────────────────────
+# ───────────────────────────────────────────
 bot.run(TOKEN)
