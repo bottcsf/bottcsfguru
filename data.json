@@ -55,6 +55,46 @@
       "clube": "Portugal",
       "preco": 350000,
       "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497406829594935356/136_Sem_Titulo_20260424221943.png?ex=69ed6848&is=69ec16c8&hm=d40a418ace0060f72bd35144ba3dc80afd0847ca13a166eb0bba8e2eea9bd366&"
+    },
+    {
+      "nome": "VOIDKAIAN",
+      "posicao": "MEI",
+      "overall": 78,
+      "clube": "Italy",
+      "preco": 345000,
+      "imagem": "https://cdn.discordapp.com/attachments/1497342489533743316/1497439248905797782/139_Sem_Titulo_20260425002757.png?ex=69ed867a&is=69ec34fa&hm=cc0455234a38dcf77d65d0454c26664c9db36a5c716aecf6e11cbd621ed9613d&"
+    },
+    {
+      "nome": "HaardTexx",
+      "posicao": "CM",
+      "overall": 74,
+      "clube": "Sweden",
+      "preco": 375000,
+      "imagem": "https://cdn.discordapp.com/attachments/1497342489533743316/1497421455384903771/138_Sem_Titulo_20260424231742.png?ex=69ed75e7&is=69ec2467&hm=39c98ced46fbd650bb7ff6194d448170651b94fd4a9dc30c05e9dccbdb9303e8&"
+    },
+    {
+      "nome": "zaque2653",
+      "posicao": "CAM",
+      "overall": 72,
+      "clube": "Hungary",
+      "preco": 120000,
+      "imagem": "https://cdn.discordapp.com/attachments/1492601213072572628/1497415983843905720/137_Sem_Titulo_20260424225502.png?ex=69ed70cf&is=69ec1f4f&hm=b3db8439459d58ffd85674d250374b2270bcc655826c60733f86affb20de47fa&"
+    },
+    {
+      "nome": "sadnoskillzrandola",
+      "posicao": "CB",
+      "overall": 80,
+      "clube": "Portugal",
+      "preco": 765000,
+      "imagem": "https://cdn.discordapp.com/attachments/1497443501326073906/1497448122819940472/140_Sem_Titulo_20260425010333.png?ex=69ed8ebd&is=69ec3d3d&hm=77a37006914c82a5cbec27052622653e4d30fdc55f83d19d1f964e7a385f180c&"
+    },
+    {
+      "nome": "mrgroove",
+      "posicao": "Atacante",
+      "overall": 99,
+      "clube": "Icons",
+      "preco":  250000000000,
+      "imagem": "https://cdn.discordapp.com/attachments/1497342489533743316/1497427155246645429/FUT_25__Icon__Legend__mrgroove__99__ST.png?ex=69ed7b36&is=69ec29b6&hm=1c64e383f30ac8ed54854a7c97913c6aeeb812963d7d4ebc761cada1091048fe&"
     }
   ],
   "membros": {}

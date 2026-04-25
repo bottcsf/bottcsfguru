@@ -34,6 +34,7 @@ CACHE_DURATION = timedelta(seconds=30)
 
 # Dicionário para cooldowns
 cooldowns_obter = {}
+cooldowns_daily = {}
 
 # ───────────────────────────────────────────
 # NORMALIZAÇÃO DE POSIÇÕES
@@ -932,6 +933,50 @@ async def obter(interaction: discord.Interaction):
     view = BotoesObter(user_id=interaction.user.id, jogador=jogador)
     await interaction.response.send_message(embed=embed, view=view)
 
+@tree.command(name="daily", description="Resgate R$ 200.000 diários (cooldown: 24h)")
+async def daily(interaction: discord.Interaction):
+    user_id = interaction.user.id
+    agora = datetime.now()
+
+    if user_id in cooldowns_daily:
+        ultimo_uso = cooldowns_daily[user_id]
+        tempo_restante = timedelta(hours=24) - (agora - ultimo_uso)
+
+        if tempo_restante.total_seconds() > 0:
+            horas = int(tempo_restante.total_seconds() // 3600)
+            minutos = int((tempo_restante.total_seconds() % 3600) // 60)
+            segundos = int(tempo_restante.total_seconds() % 60)
+
+            embed = discord.Embed(
+                title="⏰ Daily já resgatado!",
+                description=f"Você já resgatou o seu daily hoje.\n\nVolte em **{horas}h {minutos}m {segundos}s**.",
+                color=0xe67e22
+            )
+            embed.set_footer(text="TCSF Guru · Liga")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return
+
+    cooldowns_daily[user_id] = agora
+
+    dados = carregar_dados()
+    user_id_str = str(interaction.user.id)
+    membro = get_membro(dados, user_id_str)
+
+    bonus = 200_000
+    membro["saldo"] = membro.get("saldo", 0) + bonus
+    salvar_dados(dados)
+
+    embed = discord.Embed(
+        title="💰 Daily Resgatado!",
+        description=f"Você recebeu **{fmt_reais(bonus)}** na sua carteira!\n\nVolte amanhã para resgatar novamente.",
+        color=0xffd700
+    )
+    embed.add_field(name="Valor recebido", value=fmt_reais(bonus), inline=True)
+    embed.add_field(name="Novo saldo", value=fmt_reais(membro["saldo"]), inline=True)
+    embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
+    embed.set_footer(text=f"TCSF Guru · {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    await interaction.response.send_message(embed=embed)
+
 @tree.command(name="promover", description="Promove um jogador para titular")
 @app_commands.describe(nome="Nome do jogador")
 async def promover(interaction: discord.Interaction, nome: str):
@@ -1267,7 +1312,6 @@ async def setar(interaction: discord.Interaction, nome: str):
     view = SelectMembroView(admin_id=interaction.user.id, jogador=jogador)
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
-# Comando de debug para admins
 @tree.command(name="limpar_duplicatas", description="[ADM] Remove jogadores duplicados dos elencos")
 async def limpar_duplicatas(interaction: discord.Interaction):
     if not is_admin(interaction):
